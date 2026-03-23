@@ -6,6 +6,7 @@ import Layout from './components/Layout';
 import GameConfigPage from './pages/GameConfigPage';
 import MyStatsPage from './pages/MyStatsPage';
 import MathBlitzPage from './pages/MathBlitzPage';
+import RetroSnakePage from './pages/RetroSnakePage';
 import { useLocation } from 'react-router-dom';
 
 function App() {
@@ -49,7 +50,7 @@ function App() {
 
 const AuthenticatedRoutes = ({ onLogout }: { onLogout: () => void }) => {
   const location = useLocation();
-  const isZenMode = location.pathname === '/math-blitz';
+  const isZenMode = ['/math-blitz', '/retro-snake'].includes(location.pathname);
 
   const getActiveItem = () => {
     if (location.pathname === '/') return 'Home';
@@ -59,7 +60,8 @@ const AuthenticatedRoutes = ({ onLogout }: { onLogout: () => void }) => {
   };
 
   if (isZenMode) {
-    return <MathBlitzPage />;
+    if (location.pathname === '/math-blitz') return <MathBlitzPage />;
+    if (location.pathname === '/retro-snake') return <RetroSnakePage />;
   }
 
   return (

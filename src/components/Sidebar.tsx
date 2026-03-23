@@ -5,9 +5,10 @@ import { useNavigate } from 'react-router-dom';
 interface SidebarProps {
   onLogout: () => void;
   activeItem: string;
+  onItemClick?: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onLogout, activeItem }) => {
+const Sidebar: React.FC<SidebarProps> = ({ onLogout, activeItem, onItemClick }) => {
   const navigate = useNavigate();
   
   const menuItems = [
@@ -16,6 +17,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout, activeItem }) => {
     { name: 'Game Configuration', icon: <Gamepad2 size={20} />, active: activeItem === 'Config', path: '/config' },
     { name: 'Settings', icon: <Settings size={20} />, active: activeItem === 'Settings', path: '/settings' },
   ];
+
+  const handleItemClick = (path: string) => {
+    navigate(path);
+    if (onItemClick) onItemClick();
+  };
 
   return (
     <aside style={{
@@ -40,7 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout, activeItem }) => {
         WebkitTextFillColor: 'transparent',
         textAlign: 'center',
         cursor: 'pointer'
-      }} onClick={() => navigate('/')}>
+      }} onClick={() => handleItemClick('/')}>
         Arcade OS
       </div>
 
@@ -48,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout, activeItem }) => {
         {menuItems.map((item) => (
           <div
             key={item.name}
-            onClick={() => navigate(item.path)}
+            onClick={() => handleItemClick(item.path)}
             style={{
               display: 'flex',
               alignItems: 'center',

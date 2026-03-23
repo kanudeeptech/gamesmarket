@@ -35,12 +35,27 @@ const MathBlitzPage: React.FC = () => {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Auto-start if requested
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('start') === 'true' && !gameStarted) {
+      setGameStarted(true);
+      // Wait a bit for the layout to stabilize before checking/requesting
+      setTimeout(() => {
+        if (!document.fullscreenElement) {
+          enterFullscreen();
+        }
+      }, 100);
+    }
+  }, []);
+
   // Fullscreen management
   const enterFullscreen = () => {
-    if (containerRef.current) {
-      if (containerRef.current.requestFullscreen) {
-        containerRef.current.requestFullscreen();
-      }
+    const element = containerRef.current || document.documentElement;
+    if (element.requestFullscreen) {
+      element.requestFullscreen().catch(err => {
+        console.warn(`Fullscreen request failed: ${err.message}`);
+      });
     }
   };
 
@@ -126,10 +141,11 @@ const MathBlitzPage: React.FC = () => {
   };
 
   const handleQuit = () => {
+    // Navigate home without saving any data
     if (document.fullscreenElement) {
       document.exitFullscreen();
     }
-    navigate('/');
+    navigate('/', { replace: true });
   };
 
   if (!gameStarted) {
@@ -146,9 +162,9 @@ const MathBlitzPage: React.FC = () => {
       }}>
         <div style={{ textAlign: 'center', maxWidth: '500px', padding: '40px' }}>
           <Shield size={64} color="var(--neon-blue, #00d2ff)" style={{ marginBottom: '24px' }} />
-          <h1 style={{ fontSize: '3rem', marginBottom: '16px', fontWeight: 'bold' }}>Math Blitz</h1>
+          <h1 style={{ fontSize: '3.3rem', marginBottom: '16px', fontWeight: 'bold' }}>Math Blitz</h1>
           <p style={{ color: 'rgba(255,255,255,0.6)', marginBottom: '40px', lineHeight: '1.6' }}>
-            Solve 10 BODMAS problems in record time. Full-screen mode is required to combat cheating.
+            Solve 10 BODMAS problems in record time. Full-screen mode is required for anti-cheat protection.
           </p>
           <button
             onClick={startGame}
@@ -186,20 +202,16 @@ const MathBlitzPage: React.FC = () => {
         color: 'white'
       }}>
         <CheckCircle2 size={80} color="#4ade80" style={{ marginBottom: '24px' }} />
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '8px' }}>Challenge Complete!</h1>
+        <h1 style={{ fontSize: '2.8rem', marginBottom: '8px' }}>Challenge Complete!</h1>
         <p style={{ fontSize: '1.5rem', color: 'rgba(255,255,255,0.6)', marginBottom: '40px' }}>
           Final Score: <span style={{ color: 'var(--neon-blue, #00d2ff)', fontWeight: 'bold' }}>{score}/10</span>
         </p>
         <button
           onClick={() => navigate('/')}
+          className="btn-primary"
           style={{
             padding: '12px 32px',
-            borderRadius: '8px',
-            border: '1px solid rgba(255,255,255,0.2)',
-            background: 'rgba(255,255,255,0.05)',
-            color: 'white',
-            fontWeight: 'bold',
-            cursor: 'pointer'
+            borderRadius: '8px'
           }}
         >
           FINISH
@@ -223,7 +235,6 @@ const MathBlitzPage: React.FC = () => {
         overflow: 'hidden'
       }}
     >
-      {/* Zen Mode Elements Only */}
       <div style={{
         position: 'absolute',
         top: '40px',
@@ -294,6 +305,7 @@ const MathBlitzPage: React.FC = () => {
           position: 'fixed',
           inset: 0,
           background: 'rgba(0,0,0,0.95)',
+          backdropFilter: 'blur(10px)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -302,40 +314,51 @@ const MathBlitzPage: React.FC = () => {
           textAlign: 'center',
           padding: '20px'
         }}>
-          <AlertTriangle size={80} color="#ffcc00" style={{ marginBottom: '24px' }} />
-          <h2 style={{ fontSize: '2.5rem', color: '#ffcc00', marginBottom: '16px' }}>Warning: Anti-Cheat Triggered</h2>
-          <p style={{ fontSize: '1.2rem', marginBottom: '40px', maxWidth: '600px', color: 'rgba(255,255,255,0.8)' }}>
-            Leaving full-screen will end your game. Do you want to Quit or Continue?
-          </p>
-          <div style={{ display: 'flex', gap: '20px' }}>
-            <button
-              onClick={handleQuit}
-              style={{
-                padding: '12px 32px',
-                borderRadius: '8px',
-                border: '1px solid #ff4444',
-                background: 'transparent',
-                color: '#ff4444',
-                fontWeight: 'bold',
-                cursor: 'pointer'
-              }}
-            >
-              QUIT GAME
-            </button>
-            <button
-              onClick={handleContinue}
-              style={{
-                padding: '12px 32px',
-                borderRadius: '8px',
-                background: '#ffcc00',
-                color: 'black',
-                border: 'none',
-                fontWeight: 'bold',
-                cursor: 'pointer'
-              }}
-            >
-              CONTINUE
-            </button>
+          <div className="glass fade-in" style={{
+            background: 'var(--bg-card)',
+            padding: '40px',
+            borderRadius: '24px',
+            maxWidth: '500px',
+            width: '100%',
+            border: '2px solid #ffcc00',
+            boxShadow: '0 0 30px rgba(255, 204, 0, 0.2)'
+          }}>
+            <AlertTriangle size={64} color="#ffcc00" style={{ marginBottom: '24px' }} />
+            <h2 style={{ fontSize: '2rem', color: '#ffcc00', marginBottom: '16px' }}>Anti-Cheat Warning</h2>
+            <p style={{ fontSize: '1.1rem', marginBottom: '40px', color: 'rgba(255,255,255,0.8)', lineHeight: '1.6' }}>
+              Game will terminate and no score will be saved if you leave full-screen. Return to game?
+            </p>
+            <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
+              <button
+                onClick={handleQuit}
+                style={{
+                  padding: '12px 24px',
+                  borderRadius: '10px',
+                  border: '1px solid var(--border-color)',
+                  background: 'transparent',
+                  color: 'var(--text-dim)',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                Exit Game
+              </button>
+              <button
+                onClick={handleContinue}
+                style={{
+                  padding: '12px 32px',
+                  borderRadius: '10px',
+                  background: '#ffcc00',
+                  color: 'black',
+                  border: 'none',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  boxShadow: '0 0 20px rgba(255, 204, 0, 0.3)'
+                }}
+              >
+                Return to Game
+              </button>
+            </div>
           </div>
         </div>
       )}

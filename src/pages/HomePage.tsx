@@ -5,25 +5,50 @@ import { useNavigate } from 'react-router-dom';
 
 const HomePage: React.FC = () => {
   const [isMathBlitzEnabled, setIsMathBlitzEnabled] = useState<boolean>(false);
+  const [isRetroSnakeEnabled, setIsRetroSnakeEnabled] = useState<boolean>(false);
+  const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
+  const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     setIsMathBlitzEnabled(localStorage.getItem('mathBlitzEnabled') === 'true');
+    setIsRetroSnakeEnabled(localStorage.getItem('retroSnakeEnabled') === 'true');
   }, []);
 
-  const games = isMathBlitzEnabled ? [
-    {
+  const games = [];
+  if (isMathBlitzEnabled) {
+    games.push({
       id: 'math-blitz',
       title: 'Math Blitz',
       rating: 4.8,
       image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=800&auto=format&fit=crop'
-    }
-  ] : [];
+    });
+  }
+  if (isRetroSnakeEnabled) {
+    games.push({
+      id: 'retro-snake',
+      title: 'Retro Snake',
+      rating: 4.9,
+      image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop'
+    });
+  }
 
   const handleGameClick = (id: string) => {
-    if (id === 'math-blitz') {
-      navigate('/math-blitz');
+    setSelectedGameId(id);
+    setShowConfirmation(true);
+  };
+
+  const handleStartGame = () => {
+    if (selectedGameId) {
+      // Trigger fullscreen on user gesture
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+        });
+      }
+      navigate(`/${selectedGameId}?start=true`);
     }
+    setShowConfirmation(false);
   };
 
   return (
@@ -88,6 +113,66 @@ const HomePage: React.FC = () => {
               />
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Confirmation Popup */}
+      {showConfirmation && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.8)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px'
+        }}>
+          <div className="glass fade-in" style={{
+            background: 'var(--bg-card)',
+            padding: '40px',
+            borderRadius: '24px',
+            maxWidth: '450px',
+            width: '100%',
+            textAlign: 'center',
+            border: '1px solid var(--neon-blue)',
+            boxShadow: 'var(--shadow-neon)'
+          }}>
+            <h2 style={{ marginBottom: '16px', color: 'white' }}>Ready to play?</h2>
+            <p style={{ color: 'var(--text-dim)', marginBottom: '32px', lineHeight: '1.6' }}>
+              You are about to launch <span style={{ color: 'var(--neon-blue)', fontWeight: 'bold' }}>
+                {games.find(g => g.id === selectedGameId)?.title}
+              </span>. 
+              The game will open in full-screen mode for the best experience and anti-cheat protection.
+            </p>
+            <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
+              <button 
+                onClick={() => setShowConfirmation(false)}
+                style={{
+                  padding: '12px 24px',
+                  borderRadius: '10px',
+                  background: 'transparent',
+                  color: 'var(--text-dim)',
+                  border: '1px solid var(--border-color)',
+                  fontWeight: '600'
+                }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleStartGame}
+                className="btn-primary"
+                style={{
+                  padding: '12px 32px',
+                  borderRadius: '10px',
+                  boxShadow: '0 0 20px rgba(0, 210, 255, 0.4)'
+                }}
+              >
+                Start Game
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>
