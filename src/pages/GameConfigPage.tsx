@@ -7,6 +7,9 @@ const GameConfigPage: React.FC = () => {
   const [isRetroSnakeEnabled, setIsRetroSnakeEnabled] = useState<boolean>(() => {
     return localStorage.getItem('retroSnakeEnabled') === 'true';
   });
+  const [isPacManRetroEnabled, setIsPacManRetroEnabled] = useState<boolean>(() => {
+    return localStorage.getItem('pacmanRetroEnabled') === 'true';
+  });
 
   const toggleMathBlitz = () => {
     const newState = !isMathBlitzEnabled;
@@ -18,6 +21,12 @@ const GameConfigPage: React.FC = () => {
     const newState = !isRetroSnakeEnabled;
     setIsRetroSnakeEnabled(newState);
     localStorage.setItem('retroSnakeEnabled', String(newState));
+  };
+
+  const togglePacManRetro = () => {
+    const newState = !isPacManRetroEnabled;
+    setIsPacManRetroEnabled(newState);
+    localStorage.setItem('pacmanRetroEnabled', String(newState));
   };
 
   return (
@@ -91,6 +100,40 @@ const GameConfigPage: React.FC = () => {
               }}
             >
               {isRetroSnakeEnabled ? 'Enabled' : 'Disabled'}
+            </button>
+          </div>
+        </div>
+
+        {/* Pac-Man Retro Config */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          borderRadius: '16px',
+          padding: '24px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <h3 style={{ fontSize: '1.25rem', marginBottom: '4px' }}>Pac-Man Retro</h3>
+              <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.9rem' }}>
+                Enable this to show Pac-Man Retro in the game grid.
+              </p>
+            </div>
+            
+            <button
+              onClick={togglePacManRetro}
+              style={{
+                padding: '10px 20px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                transition: 'all 0.3s ease',
+                background: isPacManRetroEnabled ? 'var(--neon-blue, #00d2ff)' : 'rgba(255, 255, 255, 0.1)',
+                color: isPacManRetroEnabled ? '#000' : '#fff',
+                boxShadow: isPacManRetroEnabled ? '0 0 15px rgba(0, 210, 255, 0.4)' : 'none'
+              }}
+            >
+              {isPacManRetroEnabled ? 'Enabled' : 'Disabled'}
             </button>
           </div>
         </div>

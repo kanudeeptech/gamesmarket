@@ -7,6 +7,7 @@ import GameConfigPage from './pages/GameConfigPage';
 import MyStatsPage from './pages/MyStatsPage';
 import MathBlitzPage from './pages/MathBlitzPage';
 import RetroSnakePage from './pages/RetroSnakePage';
+import PacManRetroPage from './pages/PacManRetroPage';
 import { useLocation } from 'react-router-dom';
 
 function App() {
@@ -50,7 +51,7 @@ function App() {
 
 const AuthenticatedRoutes = ({ onLogout }: { onLogout: () => void }) => {
   const location = useLocation();
-  const isZenMode = ['/math-blitz', '/retro-snake'].includes(location.pathname);
+  const isZenMode = ['/math-blitz', '/retro-snake', '/pacman-retro'].includes(location.pathname);
 
   const getActiveItem = () => {
     if (location.pathname === '/') return 'Home';
@@ -62,6 +63,7 @@ const AuthenticatedRoutes = ({ onLogout }: { onLogout: () => void }) => {
   if (isZenMode) {
     if (location.pathname === '/math-blitz') return <MathBlitzPage />;
     if (location.pathname === '/retro-snake') return <RetroSnakePage />;
+    if (location.pathname === '/pacman-retro') return <PacManRetroPage />;
   }
 
   return (
