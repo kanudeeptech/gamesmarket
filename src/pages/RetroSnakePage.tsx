@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, CheckCircle2, Trophy, Timer, Shield, RefreshCw } from 'lucide-react';
 
-const GRID_SIZE = 20;
-const INITIAL_SPEED = 150;
+const GRID_SIZE = 25;
+const INITIAL_SPEED = 180;
 const SPEED_INCREMENT = 10;
 const MIN_SPEED = 60;
 
@@ -153,7 +153,7 @@ const RetroSnakePage: React.FC = () => {
     if (document.fullscreenElement) {
       document.exitFullscreen();
     }
-    
+
     // Save score
     const existingStats = JSON.parse(localStorage.getItem('gameStats') || '[]');
     const newStat = {
@@ -206,13 +206,13 @@ const RetroSnakePage: React.FC = () => {
         fontFamily: 'Orbitron, sans-serif'
       }}>
         <div style={{ textAlign: 'center', maxWidth: '500px', padding: '40px' }}>
-          <div style={{ 
-            width: '80px', 
-            height: '80px', 
-            background: 'var(--neon-blue)', 
-            borderRadius: '20px', 
-            display: 'flex', 
-            alignItems: 'center', 
+          <div style={{
+            width: '80px',
+            height: '80px',
+            background: 'var(--neon-blue)',
+            borderRadius: '20px',
+            display: 'flex',
+            alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 24px',
             boxShadow: '0 0 20px rgba(0, 210, 255, 0.4)'
@@ -290,7 +290,7 @@ const RetroSnakePage: React.FC = () => {
   }
 
   return (
-    <div 
+    <div
       ref={containerRef}
       style={{
         height: '100vh',
@@ -332,47 +332,81 @@ const RetroSnakePage: React.FC = () => {
         </div>
       </div>
 
-      {/* Game Board */}
+      {/* Game Board Container */}
       <div style={{
         width: 'min(80vh, 90vw)',
         height: 'min(80vh, 90vw)',
         background: '#0f172a',
         border: '2px solid var(--border-color)',
         position: 'relative',
-        display: 'grid',
-        gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
-        gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`,
         boxShadow: '0 0 50px rgba(0,0,0,0.5)',
         borderRadius: '8px',
         overflow: 'hidden'
       }}>
-        {/* Snake segments */}
-        {snake.map((segment, i) => (
-          <div
-            key={i}
-            style={{
-              gridColumnStart: segment.x + 1,
-              gridRowStart: segment.y + 1,
-              background: i === 0 ? '#4ade80' : '#22c55e',
-              border: '1px solid #0f172a',
-              borderRadius: i === 0 ? '4px' : '2px',
-              boxShadow: i === 0 ? '0 0 10px rgba(74, 222, 128, 0.5)' : 'none',
-              zIndex: i === 0 ? 2 : 1
-            }}
-          />
-        ))}
+        {/* Grid Overlay (Visual only) */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
+          gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`,
+          width: '100%',
+          height: '100%',
+          opacity: 0.1,
+          pointerEvents: 'none'
+        }}>
+          {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => (
+            <div key={i} style={{ border: '1px solid rgba(255,255,255,0.1)' }} />
+          ))}
+        </div>
 
-        {/* Food */}
-        <div
-          style={{
-            gridColumnStart: food.x + 1,
-            gridRowStart: food.y + 1,
-            background: '#ef4444',
-            borderRadius: '50%',
-            boxShadow: '0 0 15px rgba(239, 68, 68, 0.6)',
-            animation: 'pulse 1s infinite'
-          }}
-        />
+        {/* Entities (Absolute Layer) */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none'
+        }}>
+          {/* Snake segments */}
+          {snake.map((segment, i) => (
+            <div
+              key={i}
+              style={{
+                position: 'absolute',
+                width: `${100 / GRID_SIZE}%`,
+                height: `${100 / GRID_SIZE}%`,
+                left: `${(segment.x / GRID_SIZE) * 100}%`,
+                top: `${(segment.y / GRID_SIZE) * 100}%`,
+                background: i === 0 ? '#4ade80' : '#22c55e',
+                border: '1px solid #0f172a',
+                borderRadius: i === 0 ? '4px' : '2px',
+                boxShadow: i === 0 ? '0 0 10px rgba(74, 222, 128, 0.5)' : 'none',
+                zIndex: i === 0 ? 2 : 1,
+                transition: `all ${speed}ms linear`
+              }}
+            />
+          ))}
+
+          {/* Food */}
+          <div
+            style={{
+              position: 'absolute',
+              width: `${100 / GRID_SIZE}%`,
+              height: `${100 / GRID_SIZE}%`,
+              left: `${(food.x / GRID_SIZE) * 100}%`,
+              top: `${(food.y / GRID_SIZE) * 100}%`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1
+            }}
+          >
+            <div style={{
+              width: '80%',
+              height: '80%',
+              background: '#ef4444',
+              borderRadius: '50%',
+              boxShadow: '0 0 15px rgba(239, 68, 68, 0.6)'
+            }} />
+          </div>
+        </div>
       </div>
 
       {/* Controls Help */}
