@@ -10,6 +10,9 @@ const GameConfigPage: React.FC = () => {
   const [isPacManRetroEnabled, setIsPacManRetroEnabled] = useState<boolean>(() => {
     return localStorage.getItem('pacmanRetroEnabled') === 'true';
   });
+  const [isFlappyNeonEnabled, setIsFlappyNeonEnabled] = useState<boolean>(() => {
+    return localStorage.getItem('flappyNeonEnabled') === 'true';
+  });
 
   const toggleMathBlitz = () => {
     const newState = !isMathBlitzEnabled;
@@ -27,6 +30,12 @@ const GameConfigPage: React.FC = () => {
     const newState = !isPacManRetroEnabled;
     setIsPacManRetroEnabled(newState);
     localStorage.setItem('pacmanRetroEnabled', String(newState));
+  };
+
+  const toggleFlappyNeon = () => {
+    const newState = !isFlappyNeonEnabled;
+    setIsFlappyNeonEnabled(newState);
+    localStorage.setItem('flappyNeonEnabled', String(newState));
   };
 
   return (
@@ -134,6 +143,40 @@ const GameConfigPage: React.FC = () => {
               }}
             >
               {isPacManRetroEnabled ? 'Enabled' : 'Disabled'}
+            </button>
+          </div>
+        </div>
+
+        {/* Flappy Neon Config */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          borderRadius: '16px',
+          padding: '24px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <h3 style={{ fontSize: '1.25rem', marginBottom: '4px' }}>Flappy Neon</h3>
+              <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.9rem' }}>
+                Enable this to show Flappy Neon in the game grid.
+              </p>
+            </div>
+            
+            <button
+              onClick={toggleFlappyNeon}
+              style={{
+                padding: '10px 20px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                transition: 'all 0.3s ease',
+                background: isFlappyNeonEnabled ? 'var(--neon-yellow, #fbbf24)' : 'rgba(255, 255, 255, 0.1)',
+                color: isFlappyNeonEnabled ? '#000' : '#fff',
+                boxShadow: isFlappyNeonEnabled ? '0 0 15px rgba(251, 191, 36, 0.4)' : 'none'
+              }}
+            >
+              {isFlappyNeonEnabled ? 'Enabled' : 'Disabled'}
             </button>
           </div>
         </div>

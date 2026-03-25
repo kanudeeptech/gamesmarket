@@ -7,6 +7,7 @@ const HomePage: React.FC = () => {
   const [isMathBlitzEnabled, setIsMathBlitzEnabled] = useState<boolean>(false);
   const [isRetroSnakeEnabled, setIsRetroSnakeEnabled] = useState<boolean>(false);
   const [isPacManRetroEnabled, setIsPacManRetroEnabled] = useState<boolean>(false);
+  const [isFlappyNeonEnabled, setIsFlappyNeonEnabled] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const HomePage: React.FC = () => {
     setIsMathBlitzEnabled(localStorage.getItem('mathBlitzEnabled') === 'true');
     setIsRetroSnakeEnabled(localStorage.getItem('retroSnakeEnabled') === 'true');
     setIsPacManRetroEnabled(localStorage.getItem('pacmanRetroEnabled') === 'true');
+    setIsFlappyNeonEnabled(localStorage.getItem('flappyNeonEnabled') === 'true');
   }, []);
 
   const games = [];
@@ -40,6 +42,14 @@ const HomePage: React.FC = () => {
       title: 'Pac-Man Retro',
       rating: 4.7,
       image: 'https://images.unsplash.com/photo-1579306194872-64d3b7bac4c2?q=80&w=800&auto=format&fit=crop'
+    });
+  }
+  if (isFlappyNeonEnabled) {
+    games.push({
+      id: 'flappy-neon',
+      title: 'Flappy Neon',
+      rating: 4.8,
+      image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=800&auto=format&fit=crop'
     });
   }
 
