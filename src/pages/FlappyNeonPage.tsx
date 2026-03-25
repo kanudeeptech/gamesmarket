@@ -6,7 +6,8 @@ const GRAVITY = 0.7;
 const JUMP_FORCE = -10;
 const PIPE_SPEED = 3;
 const PIPE_WIDTH = 60;
-const PIPE_GAP = 180;
+const MIN_PIPE_GAP = 140;
+const MAX_PIPE_GAP = 220;
 const BIRD_SIZE = 50;
 const GAME_WIDTH = 1024;
 const GAME_HEIGHT = 768;
@@ -16,6 +17,7 @@ type Pipe = {
   x: number;
   topHeight: number;
   passed: boolean;
+  gap: number;
 };
 
 const FlappyNeonPage: React.FC = () => {
@@ -85,7 +87,7 @@ const FlappyNeonPage: React.FC = () => {
     birdVelocityRef.current = 0;
     
     // Initial pipe
-    const initialPipes = [{ x: GAME_WIDTH, topHeight: 200, passed: false }];
+    const initialPipes = [{ x: GAME_WIDTH, topHeight: 200, passed: false, gap: 180 }];
     setPipes(initialPipes);
     pipesRef.current = initialPipes;
     
@@ -171,10 +173,11 @@ const FlappyNeonPage: React.FC = () => {
     // Add new pipes
     const lastPipe = currentPipes[currentPipes.length - 1];
     if (lastPipe && lastPipe.x < gameWidth - 300) {
+      const currentGap = Math.floor(Math.random() * (MAX_PIPE_GAP - MIN_PIPE_GAP + 1)) + MIN_PIPE_GAP;
       const minHeight = 50;
-      const maxHeight = gameHeight - PIPE_GAP - 50;
+      const maxHeight = gameHeight - currentGap - 50;
       const topHeight = Math.max(minHeight, Math.floor(Math.random() * (maxHeight - minHeight + 1)) + minHeight);
-      currentPipes.push({ x: gameWidth, topHeight, passed: false });
+      currentPipes.push({ x: gameWidth, topHeight, passed: false, gap: currentGap });
     }
 
     // Collision & Scoring
@@ -200,7 +203,7 @@ const FlappyNeonPage: React.FC = () => {
       const inHorizontalRange = birdRect.right > pipe.x && birdRect.left < pipe.x + PIPE_WIDTH;
       if (inHorizontalRange) {
         const hitTop = birdRect.top < pipe.topHeight;
-        const hitBottom = birdRect.bottom > pipe.topHeight + PIPE_GAP;
+        const hitBottom = birdRect.bottom > pipe.topHeight + pipe.gap;
         if (hitTop || hitBottom) {
           hitPipe = true;
         }
@@ -352,7 +355,7 @@ const FlappyNeonPage: React.FC = () => {
                 <div style={{ position: 'absolute', bottom: 0, left: '-4px', right: '-4px', height: '20px', background: '#22c55e', border: '2px solid white' }} />
             </div>
             <div style={{
-              position: 'absolute', left: `${pipe.x}px`, top: `${pipe.topHeight + PIPE_GAP}px`, width: `${PIPE_WIDTH}px`, bottom: 0,
+              position: 'absolute', left: `${pipe.x}px`, top: `${pipe.topHeight + pipe.gap}px`, width: `${PIPE_WIDTH}px`, bottom: 0,
               background: 'var(--neon-green, #4ade80)', border: '2px solid white', borderBottom: 'none',
               boxShadow: '0 0 20px rgba(74, 222, 128, 0.4)', zIndex: 5
             }}>
