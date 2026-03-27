@@ -8,6 +8,7 @@ const HomePage: React.FC = () => {
   const [isRetroSnakeEnabled, setIsRetroSnakeEnabled] = useState<boolean>(false);
   const [isPacManRetroEnabled, setIsPacManRetroEnabled] = useState<boolean>(false);
   const [isFlappyNeonEnabled, setIsFlappyNeonEnabled] = useState<boolean>(false);
+  const [isBombermanEnabled, setIsBombermanEnabled] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const HomePage: React.FC = () => {
     setIsRetroSnakeEnabled(localStorage.getItem('retroSnakeEnabled') === 'true');
     setIsPacManRetroEnabled(localStorage.getItem('pacmanRetroEnabled') === 'true');
     setIsFlappyNeonEnabled(localStorage.getItem('flappyNeonEnabled') === 'true');
+    setIsBombermanEnabled(localStorage.getItem('bombermanEnabled') === 'true');
   }, []);
 
   const games = [];
@@ -50,6 +52,14 @@ const HomePage: React.FC = () => {
       title: 'Flappy Neon',
       rating: 4.8,
       image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=800&auto=format&fit=crop'
+    });
+  }
+  if (isBombermanEnabled) {
+    games.push({
+      id: 'bomberman',
+      title: 'Bomberman',
+      rating: 4.9,
+      image: 'https://images.unsplash.com/photo-1614680376593-902f74a9cb0d?q=80&w=800&auto=format&fit=crop'
     });
   }
 

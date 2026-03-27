@@ -13,6 +13,9 @@ const GameConfigPage: React.FC = () => {
   const [isFlappyNeonEnabled, setIsFlappyNeonEnabled] = useState<boolean>(() => {
     return localStorage.getItem('flappyNeonEnabled') === 'true';
   });
+  const [isBombermanEnabled, setIsBombermanEnabled] = useState<boolean>(() => {
+    return localStorage.getItem('bombermanEnabled') === 'true';
+  });
 
   const toggleMathBlitz = () => {
     const newState = !isMathBlitzEnabled;
@@ -36,6 +39,12 @@ const GameConfigPage: React.FC = () => {
     const newState = !isFlappyNeonEnabled;
     setIsFlappyNeonEnabled(newState);
     localStorage.setItem('flappyNeonEnabled', String(newState));
+  };
+
+  const toggleBomberman = () => {
+    const newState = !isBombermanEnabled;
+    setIsBombermanEnabled(newState);
+    localStorage.setItem('bombermanEnabled', String(newState));
   };
 
   return (
@@ -177,6 +186,40 @@ const GameConfigPage: React.FC = () => {
               }}
             >
               {isFlappyNeonEnabled ? 'Enabled' : 'Disabled'}
+            </button>
+          </div>
+        </div>
+
+        {/* Bomberman Config */}
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          borderRadius: '16px',
+          padding: '24px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <h3 style={{ fontSize: '1.25rem', marginBottom: '4px' }}>Bomberman</h3>
+              <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.9rem' }}>
+                Enable this to show Bomberman in the game grid.
+              </p>
+            </div>
+            
+            <button
+              onClick={toggleBomberman}
+              style={{
+                padding: '10px 20px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                transition: 'all 0.3s ease',
+                background: isBombermanEnabled ? 'var(--neon-green, #10b981)' : 'rgba(255, 255, 255, 0.1)',
+                color: isBombermanEnabled ? '#fff' : '#fff',
+                boxShadow: isBombermanEnabled ? '0 0 15px rgba(16, 185, 129, 0.4)' : 'none'
+              }}
+            >
+              {isBombermanEnabled ? 'Enabled' : 'Disabled'}
             </button>
           </div>
         </div>
